@@ -28,8 +28,8 @@
 include(cmake/version.cmake)
 
 include(cmake/antlr/ExternalAntlr4Cpp.cmake)
-include_directories( ${ANTLR4CPP_INCLUDE_DIRS} )
-link_directories( ${ANTLR4CPP_LIBS} )
+include_directories( ${ANTLR4_INCLUDE_DIRS} )
+link_directories( ${ANTLR4_SHARED_LIBRARIES} )
 
 project(j9vm VERSION ${J9VM_VERSION} LANGUAGES CXX C)
 
