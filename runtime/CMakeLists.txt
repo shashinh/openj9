@@ -27,6 +27,10 @@
 
 include(cmake/version.cmake)
 
+include(cmake/antlr/ExternalAntlr4Cpp.cmake)
+include_directories( ${ANTLR4CPP_INCLUDE_DIRS} )
+link_directories( ${ANTLR4CPP_LIBS} )
+
 project(j9vm VERSION ${J9VM_VERSION} LANGUAGES CXX C)
 
 set(J9VM_OMR_DIR "${CMAKE_CURRENT_SOURCE_DIR}/omr" CACHE PATH "Path to the OMR directory")

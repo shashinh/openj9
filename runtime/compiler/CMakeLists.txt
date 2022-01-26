@@ -358,6 +358,7 @@ target_link_libraries(j9jit
 		j9utilcore
 		j9hookable
 		j9thr
+		antlr4_shared
 		${CMAKE_DL_LIBS}
 )
 
