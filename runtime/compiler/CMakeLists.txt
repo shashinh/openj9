@@ -252,7 +252,7 @@ if(OMR_OS_LINUX OR OMR_OS_OSX)
 		-Wno-invalid-offsetof
 	)
 	if(NOT J9VM_OPT_JITSERVER)
-		list(APPEND J9_CXXFLAGS -fno-rtti)
+		#list(APPEND J9_CXXFLAGS -fno-rtti)
 	endif()
 
 	list(APPEND J9_CFLAGS -std=gnu89)
