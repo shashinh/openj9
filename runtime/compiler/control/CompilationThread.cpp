@@ -31,6 +31,7 @@
 
 #include "control/CompilationThread.hpp"
 
+#include <iostream>
 #include <exception>
 #include <limits.h>
 #include <stdlib.h>
@@ -103,6 +104,7 @@
 #include "net/ClientStream.hpp"
 #include "net/ServerStream.hpp"
 #include "omrformatconsts.h"
+#include "optimizer/OMROptimizer.hpp"
 #endif /* defined(J9VM_OPT_JITSERVER) */
 #ifdef COMPRESS_AOT_DATA
 #include "shcdatatypes.h" // For CompiledMethodWrapper
@@ -3082,6 +3084,9 @@ void TR::CompilationInfo::stopCompilationThreads()
    {
    J9JavaVM   * const vm       = _jitConfig->javaVM;
    J9VMThread * const vmThread = vm->internalVMFunctions->currentVMThread(vm);
+
+   std::cout << "shutdown message from shashin!\n";
+   std::cout << "static from OMROptimizer: " << OMR::Optimizer::shstring << "\n";
 
    static char * printCompStats = feGetEnv("TR_PrintCompStats");
    if (printCompStats)
