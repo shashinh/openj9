@@ -3085,8 +3085,9 @@ void TR::CompilationInfo::stopCompilationThreads()
    J9JavaVM   * const vm       = _jitConfig->javaVM;
    J9VMThread * const vmThread = vm->internalVMFunctions->currentVMThread(vm);
 
-   std::cout << "shutdown message from shashin!\n";
-   std::cout << "static from OMROptimizer: " << OMR::Optimizer::shstring << "\n";
+//   std::cout << "shutdown message from shashin!\n";
+//   std::cout << "static from OMROptimizer: " << OMR::Optimizer::shstring << "\n";
+   std::cout << "Runtime PTA identified " << OMR::Optimizer::monomorphCount << " monomorphic calls\n";
 
    static char * printCompStats = feGetEnv("TR_PrintCompStats");
    if (printCompStats)
