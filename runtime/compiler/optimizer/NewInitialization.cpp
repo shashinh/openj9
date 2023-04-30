@@ -22,6 +22,7 @@
 
 #include "optimizer/NewInitialization.hpp"
 
+#include <iostream>
 #include <stdint.h>
 #include <string.h>
 #include "codegen/CodeGenerator.hpp"
@@ -629,6 +630,7 @@ TR::ResolvedMethodSymbol *TR_NewInitialization::findInlinableMethod(TR::TreeTop 
 	//TR_CallSite *callsite = new (trStackMemory()) TR_CallSite (symRef->getOwningMethod(comp()),callTree,parent,callNode,calleeMethodSymbol->getMethod(),thisClass,(int32_t)symRef->getOffset(),symRef->getCPIndex(),0,calleeMethodSymbol->getResolvedMethodSymbol(),callNode->getOpCode().isCallIndirect(),calleeMethodSymbol->isInterface(),callNode->getByteCodeInfo(),comp());
 
    newInlineCall.getSymbolAndFindInlineTargets(NULL,callsite);
+               //std::cout << "NewInitialization.cpp\n";
    bool canSniff = callsite->numTargets() ? true : false;
 
 // (newInlineCall.isInlineable(NULL, callNode, guard, thisClass, callTree) != NULL);

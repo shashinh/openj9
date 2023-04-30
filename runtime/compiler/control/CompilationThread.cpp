@@ -3085,9 +3085,12 @@ void TR::CompilationInfo::stopCompilationThreads()
    J9JavaVM   * const vm       = _jitConfig->javaVM;
    J9VMThread * const vmThread = vm->internalVMFunctions->currentVMThread(vm);
 
-//   std::cout << "shutdown message from shashin!\n";
-//   std::cout << "static from OMROptimizer: " << OMR::Optimizer::shstring << "\n";
-   std::cout << "Runtime PTA identified " << OMR::Optimizer::monomorphCount << " monomorphic calls\n";
+   std::cout << "SHUTDOWN::Methods verified " << OMR::Optimizer::verifiedMethodCount << "\n";
+   std::cout << "SHUTDOWN::Moomorphic Calls Identified " << OMR::Optimizer::monomorphCount << "\n";
+   std::cout << "SHUTDOWN::TOTAL Inlining Guards Removed " << TR_DumbInliner::totalGuardsRemoved << "\n";
+   std::cout << "SHUTDOWN::UNIQUE Inlining Guards Removed " << TR_DumbInliner::uniqueGuardsRemoved << "\n";
+   std::cout << "SHUTDOWN::Out of Order methods encountered " << OMR::Optimizer::outOfOrderMethodCount << "\n";
+   std::cout << "SHUTDOWN::Time reading isMonomorph map (secs) " << TR_DumbInliner::timeReadingMaps << "\n";
 
    static char * printCompStats = feGetEnv("TR_PrintCompStats");
    if (printCompStats)

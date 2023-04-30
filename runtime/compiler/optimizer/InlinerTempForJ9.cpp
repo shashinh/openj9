@@ -19,6 +19,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0 OR GPL-2.0 WITH Classpath-exception-2.0 OR LicenseRef-GPL-2.0 WITH Assembly-exception
  *******************************************************************************/
+#include <iostream>
 #include <algorithm>
 #include "j9cfg.h"
 #include "optimizer/Inliner.hpp"
@@ -2977,6 +2978,36 @@ TR_MultipleCallTargetInliner::walkCallSite(
    //calleeSymbol->setFirstTreeTop(NULL); // We can reuse the peeked trees.  If we're doing real ILGen, the trees will be re-created anyway.
    }
 
+void testMonomorphAndProcessInline2(TR_CallSite *callsite, TR_StackMemory mem, TR::Node * callNode, TR::Compilation * comp) {
+   //SHASHIN
+      TR_ASSERT_FATAL(callsite->numTargets() <= 1, "assumption that num targets is always 0 or 1");
+   //std::cout << "INLINER:: testing node " << callNode->getGlobalIndex() << ", method " << callNode->getOwningMethod() << ", bci " << callNode->getByteCodeIndex() << " for monomorph!\n";
+   clock_t start, end;
+   start = clock(); 
+   bool isMonomorph = OMR::Optimizer::isMonomorphicCall(callNode);
+   end = clock();
+   if(isMonomorph && callsite->numTargets() == 1) {
+   //if(true && callsite->numTargets() == 1) {
+      //std::cout << "INLINER:: ..monomorph, removing guard\n";
+      //insert assert on numtargets here !!
+      TR_CallTarget *calltarget = callsite->getTarget(0);
+      TR_VirtualGuardSelection *noguard = new (mem) TR_VirtualGuardSelection(TR_NoGuard);
+      calltarget->_guard = noguard;
+
+            TR::ResolvedMethodSymbol *m = callNode->getSymbolReference()->getOwningMethodSymbol(comp);
+            std::string s = m->signature(comp->trMemory());
+            bool isCounted = TR_DumbInliner::isMonomorphicCallSiteCounted[s][callNode->getByteCodeIndex()];
+
+         TR_DumbInliner::totalGuardsRemoved++;
+      if (!isCounted) {
+         TR_DumbInliner::uniqueGuardsRemoved++;
+         TR_DumbInliner::isMonomorphicCallSiteCounted[s][callNode->getByteCodeIndex()] = true;
+      }
+      
+      TR_DumbInliner::timeReadingMaps += double(end-start) / double (CLOCKS_PER_SEC);
+   }
+}
+
 void
 TR_MultipleCallTargetInliner::walkCallSites(TR::ResolvedMethodSymbol * callerSymbol, TR_CallStack * prevCallStack, TR_InnerPreexistenceInfo *innerPrexInfo, int32_t walkDepth)
    {
@@ -3050,6 +3081,9 @@ TR_MultipleCallTargetInliner::walkCallSites(TR::ResolvedMethodSymbol * callerSym
 
                debugTrace(tracer(),"**WalkCallSites: Analysing Call at call node %p . Creating callsite %p to encapsulate call.",node,callsite);
                getSymbolAndFindInlineTargets(&callStack, callsite);
+               if(feGetEnv("TR_InlineWithMonomorphs"))
+                  testMonomorphAndProcessInline2(callsite, trStackMemory(), node, comp());
+               //std::cout << "InlinerTempForJ9.cpp walkCallSites\n";
 
                heuristicTrace(tracer(),"**WalkCallSites:Searching for Targets returned %d targets for call at node %p. ",callsite->numTargets(),node);
 
@@ -3251,6 +3285,10 @@ bool TR_MultipleCallTargetInliner::inlineCallTargets(TR::ResolvedMethodSymbol *c
                   }
 
                getSymbolAndFindInlineTargets(&callStack, callsite);
+               //extra
+               //std::cout << "InlinerTempForJ9.cpp inlineCallTargets\n";
+               if(feGetEnv("TR_InlineWithMonomorphs"))
+                  testMonomorphAndProcessInline2(callsite, trStackMemory(), node, comp());
 
                if (!prevCallStack && callsite->numTargets() > 0)
                   {
